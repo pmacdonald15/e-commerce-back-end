@@ -1,3 +1,7 @@
+// The `/api/products` endpoint
+
+// get all products
+router.get('/', (req, res) => {
 const router = require('express').Router();
 const sequelize = require('../../config/connection');
 const { Product, Category, Tag, ProductTag } = require('../../models');
@@ -6,8 +10,6 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 
 // get all products
 router.get('/', (req, res) => {
-  // find all products
-  // be sure to include its associated Category and Tag data
   Product.findAll({
     order: [['id', 'DESC']],
     attributes: [
@@ -121,11 +123,11 @@ router.put('/:id', (req, res) => {
               tag_id,
             };
           });
-        // finds out which products to remove
+
         productTagsToRemove = productTags
           .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
           .map(({ id }) => id);
-        // run both actions at the same time 
+
         return Promise.all([
           ProductTag.destroy({ where: { id: productTagsToRemove } }),
           ProductTag.bulkCreate(newProductTags),
